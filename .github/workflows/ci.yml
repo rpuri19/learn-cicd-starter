@@ -18,5 +18,8 @@ jobs:
         with:
           go-version: "1.25.1"
 
-      - name: Show Go Version
-        run: go version
+      #- name: Show Go Version
+      # run: go version
+      # Step 3: Run tests exactly like local
+      - name: Run Go tests
+        run: go test ./...
