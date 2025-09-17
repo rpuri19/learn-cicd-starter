@@ -1,4 +1,4 @@
-![alt test_status](https://github.com/rpuri19/learn-cicd-starter/actions/workflows/ci.yml/badge.svg)
+[![test_status](https://github.com/rpuri19/learn-cicd-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/rpuri19/learn-cicd-starter/actions/workflows/ci.yml)
 
 
 
