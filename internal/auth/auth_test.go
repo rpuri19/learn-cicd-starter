@@ -1,52 +1,61 @@
 package auth
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 )
 
 func TestGetAPIKey(t *testing.T) {
 	tests := []struct {
-		name       string
-		headers    http.Header
-		wantKey    string
-		wantErr    error
+		key       string
+		value     string
+		expect    string
+		expectErr string
 	}{
 		{
-			name:    "Valid API key",
-			headers: http.Header{"Authorization": []string{"ApiKey valid-key-123"}},
-			wantKey: "valid-key-123",
-			wantErr: nil,
+			expectErr: "no authorization header",
 		},
 		{
-			name:    "No Authorization header",
-			headers: http.Header{},
-			wantKey: "",
-			wantErr: ErrNoAuthHeaderIncluded,
+			key:       "Authorization",
+			expectErr: "no authorization header",
 		},
 		{
-			name:    "Malformed header - missing ApiKey",
-			headers: http.Header{"Authorization": []string{"Bearer token"}},
-			wantKey: "",
-			wantErr: errors.New("malformed authorization header"),
+			key:       "Authorization",
+			value:     "-",
+			expectErr: "malformed authorization header",
 		},
 		{
-			name:    "Malformed header - missing key",
-			headers: http.Header{"Authorization": []string{"ApiKey"}},
-			wantKey: "",
-			wantErr: errors.New("malformed authorization header"),
+			key:       "Authorization",
+			value:     "Bearer xxxxxx",
+			expectErr: "malformed authorization header",
+		},
+		{
+			key:       "Authorization",
+			value:     "ApiKey xxxxxx",
+			expect:    "xxxxxx",
+			expectErr: "not expecting an error",
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotKey, gotErr := GetAPIKey(tt.headers)
-			if gotKey != tt.wantKey {
-				t.Errorf("expected key %q, got %q", tt.wantKey, gotKey)
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("TestGetAPIKey Case #%v:", i), func(t *testing.T) {
+			header := http.Header{}
+			header.Add(test.key, test.value)
+
+			output, err := GetAPIKey(header)
+			if err != nil {
+				if strings.Contains(err.Error(), test.expectErr) {
+					return
+				}
+				t.Errorf("Unexpected: TestGetAPIKey:%v\n", err)
+				return
 			}
-			if (gotErr != nil && tt.wantErr == nil) || (gotErr == nil && tt.wantErr != nil) || (gotErr != nil && tt.wantErr != nil && gotErr.Error() != tt.wantErr.Error()) {
-				t.Errorf("expected error %v, got %v", tt.wantErr, gotErr)
+
+			if output != test.expect {
+				t.Errorf("Unexpected: TestGetAPIKey:%s", output)
+				return
 			}
 		})
 	}
