@@ -2,8 +2,7 @@ name: ci
 
 on:
   pull_request:
-    branches:
-      - '**'
+    branches: [main]
 
 jobs:
   tests:
@@ -19,11 +18,11 @@ jobs:
         with:
           go-version: "1.25.1"
 
-      - name: Run Go tests with coverage
+      - name: Run unit tests
         run: go test ./... -cover
 
   style:
-    name: Style Check
+    name: Style
     runs-on: ubuntu-latest
 
     steps:
@@ -35,9 +34,5 @@ jobs:
         with:
           go-version: "1.25.1"
 
-      - name: Run go fmt
-        id: gofmt
-        run: go fmt ./...
-
-      - name: Ensure no formatting issues
-        run: test -z "$(go fmt ./...)"
+      - name: Check formatting
+        run: test -z $(go fmt ./...)
