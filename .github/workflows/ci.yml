@@ -19,8 +19,24 @@ jobs:
         with:
           go-version: "1.25.1"
 
-      #- name: Show Go Version
-      # run: go version
-      # Step 3: Run tests exactly like local
       - name: Run Go tests with coverage
         run: go test ./... -cover
+
+  style:
+    name: Style Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.1"
+
+      - name: Run go fmt
+        run: go fmt ./...
+
+      - name: Ensure no formatting issues
+        run: test -z "$(go fmt ./...)"
