@@ -18,7 +18,7 @@ jobs:
         with:
           go-version: "1.25.1"
 
-      - name: Run unit tests
+      - name: Run Go tests with coverage
         run: go test ./... -cover
 
   style:
