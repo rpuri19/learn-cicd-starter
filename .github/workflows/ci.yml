@@ -21,6 +21,3 @@ jobs:
 
       - name: Run Go tests with coverage
         run: go test ./... -cover
-
-
-
