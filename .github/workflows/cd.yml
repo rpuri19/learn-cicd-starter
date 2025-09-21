@@ -22,17 +22,20 @@ jobs:
           chmod +x scripts/buildprod.sh
           ./scripts/buildprod.sh
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      # Authenticate with GCP
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
         with:
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # Set up gcloud CLI
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+        with:
           project_id: notely-472720
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v3'
-
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
+      - name: Verify gcloud
+        run: gcloud info
 
       - name: Build and push Docker image
         run: |
